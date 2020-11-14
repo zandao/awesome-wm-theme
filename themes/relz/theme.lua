@@ -1,6 +1,6 @@
 local gears   = require("gears")
 
-mode = "light" -- "dark" | "light"
+mode = "dark" -- "dark" | "light"
 
 theme = {}
 theme.mode = mode

@@ -469,16 +469,16 @@ end)
 
 executer.execute_commands({
   "wmname LG3D",
+  "/usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 & eval $(gnome-keyring-daemon -s --components=pkcs11,secrets,ssh,gpg)", -- credential manager
+  "numlockx on",
   "xfce4-power-manager",
   "picom",
   "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1",
   --"kbdd",
-  "phonesim -p 12345 /usr/share/phonesim/default.xml",
-  "systemctl restart ofono",
-  "dbus-send --print-reply --system --dest=org.ofono /phonesim org.ofono.Modem.SetProperty string:'Powered' variant:boolean:true",
-  "dbus-send --print-reply --system --dest=org.ofono /phonesim org.ofono.Modem.SetProperty string:'Online' variant:boolean:true",
   "pulseaudio --start",
   "xfce4-clipman",
+  "blueman-tray",
   "nm-applet",
-  "ulauncher"
+  "ulauncher",
+  "~/.config/awesome/awspawn"
 })
