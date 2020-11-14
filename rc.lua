@@ -26,12 +26,15 @@ local screens_manager = require("modules/screens_manager")
 
 -- | Variable definitions | --
 
-local terminal             = "alacritty"
-local browser              = "google-chrome-stable"
+local terminal             = "gnome-terminal"
+local browser              = "firefox"
 local file_manager         = "nautilus"
-local graphic_text_editor  = "subl"
-local music_player         = "spotify"
-local session_lock_command = "dm-tool lock"
+local graphic_text_editor  = "gedit"
+local music_player         = "google-play-music-desktop-player"
+local session_lock_command = "i3lock-fancy"
+local screenshot           = "~/.config/awesome/utils/screenshot -m"
+local region_screenshot    = "~/.config/awesome/utils/screenshot -r"
+local delayed_screenshot   = "~/.config/awesome/utils/screenshot --delayed -r"
 
 -- | Widgets | --
 
@@ -109,11 +112,11 @@ screen.connect_signal("property::geometry", awesome.restart)
 -- Brightness
 
 local brightness = function(step, increase)
-  local command = "xbacklight ";
+  local command = "sudo brightnessctl s ";
   if increase then
-    command = command .. "-inc ";
+    command = command .. "+" .. step .. "%";
   else
-    command = command .. "-dec ";
+    command = command .. step .. "%-";
   end
   command = command .. step;
   awful.spawn(command, false)
@@ -240,16 +243,12 @@ local global_keys = awful.util.table.join(
   awful.key({ "Mod4", "Shift" }, "Tab", function () change_focused_client(-1) end, { description="Change focused client to previous", group="Client" }),
 
   awful.key({ "Mod4" }, "o", awful.client.movetoscreen, { description="Move to another screen", group="Client" }),
-  awful.key({ "Mod4" }, "Cyrillic_shcha", awful.client.movetoscreen),
 
   awful.key({ "Mod4", "Control" }, "r", awesome.restart, { description="Restart awesome", group="Awesome" }),
-  awful.key({ "Mod4", "Control" }, "Cyrillic_ka", awesome.restart),
 
   awful.key({ "Mod4", "Shift" }, "q", awesome.quit, { description="Quit awesome", group="Awesome" }),
-  awful.key({ "Mod4", "Shift" }, "Cyrillic_shorti", awesome.quit),
 
   awful.key({ "Mod4" }, "l", function() awful.spawn(session_lock_command) end, { description="Lock the session", group="Session" }),
-  awful.key({ "Mod4" }, "Cyrillic_de", function() awful.spawn(session_lock_command) end),
 
   awful.key({ "Mod4" }, "Return", function () awful.spawn(terminal) end, { description="Execute default terminal(" .. terminal .. ")", group="Application" }),
 
@@ -274,72 +273,52 @@ local global_keys = awful.util.table.join(
 
   -- Applications running
   awful.key({ "Mod4", "Control", "Shift" }, "b", function() awful.spawn(browser) end, { description="Execute default web browser(" .. browser .. ")", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_i", function() awful.spawn(browser) end),
 
   awful.key({ "Mod4", "Control", "Shift" }, "t", function() awful.spawn("telegram-desktop") end, { description="Execute Telegram", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_ie", function() awful.spawn("telegram-desktop") end),
 
   awful.key({ "Mod4", "Control", "Shift" }, "l", function() awful.spawn("libreoffice") end, { description="Execute LibreOffice", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_de", function() awful.spawn("libreoffice") end),
 
   awful.key({ "Mod4", "Control", "Shift" }, "e", function() awful.spawn(graphic_text_editor) end, { description="Execute default graphic text editor(" .. graphic_text_editor .. ")", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_u", function() awful.spawn(graphic_text_editor) end),
 
   awful.key({ "Mod4", "Control", "Shift" }, "m", function() awful.spawn(music_player) end, { description="Execute default music player(" .. music_player .. ")", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_softsign", function() awful.spawn(music_player) end),
 
   awful.key({ "Mod4", "Control", "Shift" }, "f", function() awful.spawn(file_manager) end, { description="Execute default file manager(" .. file_manager .. ")", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_a", function() awful.spawn(file_manager) end),
 
   awful.key({ "Mod4", "Control", "Shift" }, "j", function() awful.spawn("jetbrains-toolbox") end, { description="Execute Jetbrains-Toolbox", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_o", function() awful.spawn("jetbrains-toolbox") end),
 
   awful.key({ "Mod4" }, "k", function() awful.spawn("xkill") end, { description="Execute XKill", group="Application" }),
-  awful.key({ "Mod4" }, "Cyrillic_el", function() awful.spawn("xkill") end),
 
   awful.key({ "Mod4" }, "\\", function() awful.spawn("arandr") end, { description="Execute ARandr", group="Application" }),
 
   awful.key({ "Mod4", "Control", "Shift" }, "d", function() awful.spawn("discord") end, { description="Execute Discord", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_ve", function() awful.spawn("discord") end),
 
   awful.key({ "Mod4", "Control", "Shift" }, "]", function() awful.spawn("obs") end, { description="Execute OBS Studio", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_hardsign", function() awful.spawn("obs") end),
 
-  awful.key({ "Mod4", "Control", "Shift" }, "s", function() awful.spawn("deepin-screen-recorder --no-notification") end, { description="Execute Deepin Screen Capture", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_yeru", function() awful.spawn("deepin-screen-recorder --no-notification") end),
+  awful.key({ "Mod4", "Control", "Shift" }, "s", function() awful.spawn("spectacle") end, { description="Execute KDE Spectacle Screen Capture", group="Application" }),
 
   awful.key({ "Mod4", "Control", "Shift" }, "v", function() awful.spawn("viber") end, { description="Execute Viber", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_em", function() awful.spawn("viber") end),
 
-  awful.key({ "Mod4", "Control", "Shift" }, "`", function() awful.spawn("deepin-system-monitor") end, { description="Execute Deepin System Monitor", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_io", function() awful.spawn("deepin-system-monitor") end),
+  awful.key({ "Mod4", "Control", "Shift" }, "`", function() awful.spawn("gnome-system-monitor") end, { description="Execute Gnome System Monitor", group="Application" }),
 
   awful.key({ "Mod4" }, "w", function() awful.spawn("connman-gtk") end, { description="Execute Connman", group="Application" }),
-  awful.key({ "Mod4" }, "Cyrillic_tse", function() awful.spawn("connman-gtk") end),
 
   awful.key({ "Mod4", "Control", "Shift" }, "k", function() awful.spawn("gitkraken") end, { description="Execute GitKraken", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_el", function() awful.spawn("gitkraken") end),
 
   awful.key({ "Mod4", "Control", "Shift" }, "c", function() awful.spawn("code") end, { description="Execute VSCode", group="Application" }),
-  awful.key({ "Mod4", "Control", "Shift" }, "Cyrillic_es", function() awful.spawn("code") end),
 
   awful.key({}, "Alt_R", toggle_keyboard_layout, { description="Toggle keyboard layout", group="Keyboard" }),
 
-  awful.key({ "Mod4" }, "d", toogle_minimize_restore_clients, { description="Toggle minimize restore clients", group="Client" }),
-  awful.key({ "Mod4" }, "Cyrillic_ve", toogle_minimize_restore_clients)
+  awful.key({ "Mod4" }, "d", toogle_minimize_restore_clients, { description="Toggle minimize restore clients", group="Client" })
 )
 
 local client_keys = awful.util.table.join(
   awful.key({ "Mod4" }, "f", toggle_fullscreen, { description="Toggle fullscreen", group="Client" }),
-  awful.key({ "Mod4" }, "Cyrillic_a", toggle_fullscreen),
 
   awful.key({ "Mod4" }, "F4", function (c) c:kill() end, { description="Kill focused client", group="Client" }),
 
   awful.key({ "Mod4" }, "n", minimize_client, { description="Minimize client", group="Client" }),
-  awful.key({ "Mod4" }, "Cyrillic_te", minimize_client),
 
-  awful.key({ "Mod4" }, "m", maximize_client, { description="Maximize client", group="Client" }),
-  awful.key({ "Mod4" }, "Cyrillic_softsign", maximize_client)
+  awful.key({ "Mod4" }, "m", maximize_client, { description="Maximize client", group="Client" })
 )
 
 for i = 1, 9 do
@@ -469,16 +448,17 @@ end)
 
 executer.execute_commands({
   "wmname LG3D",
-  "/usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 & eval $(gnome-keyring-daemon -s --components=pkcs11,secrets,ssh,gpg)", -- credential manager
+  -- credential manager (policykit)
+  "/usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 & eval $(gnome-keyring-daemon -s --components=pkcs11,secrets,ssh,gpg)",
   "numlockx on",
   "xfce4-power-manager",
-  "picom",
-  "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1",
+  "picom --experimental-backends --config ~/.config/awesome/compton.conf", 
   --"kbdd",
   "pulseaudio --start",
   "xfce4-clipman",
   "blueman-tray",
   "nm-applet",
   "ulauncher",
+  "starcer --hide",
   "~/.config/awesome/awspawn"
 })
